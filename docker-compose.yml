@@ -1,0 +1,44 @@
+version: '3'
+services:
+  minecraft:
+    image: itzg/minecraft-server:latest
+    ports:
+      - "25565:25565"
+      - "25575:25575"
+    environment:
+      VERSION: 1.12.2
+      TYPE: FORGE
+      FORGEVERSION: 14.23.1.2555
+      EULA: "TRUE"
+    volumes:
+      - minecraft-data-vol:/data
+  gogs:
+    image: gogs/gogs
+    container_name: gogs.com
+    ports:
+      - "10022:22"
+      - "10080:3000"
+    volumes:
+      - gogs-data-vol:/data
+    networks:
+      - minecraft-workshop
+  blueocean:
+    image: jenkinsci/blueocean
+    ports:
+      - "8080:8080"
+    volumes:
+      - minecraft-data-vol:/var/jenkins_home/minecraft-data
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - minecraft-workshop
+  haproxy:
+    build: ./haproxy
+    ports:
+      - "80:80"
+    networks:
+      - minecraft-workshop
+networks:
+  minecraft-workshop:
+volumes:
+  minecraft-data-vol:
+  gogs-data-vol:
