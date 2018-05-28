@@ -23,18 +23,25 @@ services:
     networks:
       - minecraft-workshop
   blueocean:
-    image: jenkinsci/blueocean
+#    image: jenkinsci/blueocean
+    build: ./blueocean
+    container_name: blueocean
     ports:
       - "8080:8080"
+    environment:
+      - JENKINS_OPTS="--prefix=/jenkins"
     volumes:
       - minecraft-data-vol:/var/jenkins_home/minecraft-data
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - minecraft-workshop
+#    group_add:
+#      - docker
   haproxy:
     build: ./haproxy
     ports:
       - "80:80"
+      - "443:443"
     networks:
       - minecraft-workshop
 networks:
